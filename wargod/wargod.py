@@ -27,12 +27,17 @@ def run():
         if not history["rss"].get(feed):
             history["rss"][feed] = []
 
-        for entry in parse(feed).entries[::-1]:
+        parsed_feed = parse(feed)
+        for entry in parsed_feed.entries[::-1]:
             if entry_key(entry) not in history["rss"][feed]:
-                history["current"].append({"title": entry.title, "link":
-                                           entry.link, "description":
-                                           entry.description, "updated":
-                                           entry.updated})
+                history["current"].append({"title": entry.title,
+                                           "link": entry.link,
+                                           "description": entry.description,
+                                           "updated": entry.get("updated"),
+                                           "site": {"title": parsed_feed.feed.title,
+                                                    "link": parsed_feed.feed.link,
+                                                   }
+                                          })
                 history["rss"][feed].append(entry_key(entry))
 
     history["current"] = history["current"][-MAX_ENTRIES:]
