@@ -22,6 +22,8 @@ def run():
         for entry in parse(feed).entries:
             print entry.title
 
+    save_history(history)
+
 def parse_feeds():
     return [rss[:-1] for rss in open(RSS_FILE, "r")]
 
@@ -31,3 +33,6 @@ def get_history():
         return json.load(open(HISTORY_FILE, "r")) if os.path.exists(HISTORY_FILE) else default
     except ValueError:
         return default
+
+def save_history(history):
+    json.dump(history, open(HISTORY_FILE, "w"))
