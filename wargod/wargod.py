@@ -26,7 +26,8 @@ def parse_feeds():
     return [rss[:-1] for rss in open(RSS_FILE, "r")]
 
 def get_history():
+    default = {"rss" : {}}
     try:
-        return json.load(open(HISTORY_FILE, "r")) if os.path.exists(HISTORY_FILE) else {"rss": {}}
+        return json.load(open(HISTORY_FILE, "r")) if os.path.exists(HISTORY_FILE) else default
     except ValueError:
-        return {"rss" : {}}
+        return default
