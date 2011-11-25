@@ -2,17 +2,23 @@
 
 import sys
 import json
+from os import makedirs
 from os.path import expanduser, exists
 from feedparser import parse
+
+from html import generate_html
 #from config import config
 
 MAX_ENTRIES = 10
-RSS_FILE = expanduser("~/.wargodrss")
-HISTORY_FILE = expanduser("~/.wargodrss.history")
+WARDOG_DIR = expanduser("~/.config/wargod/")
+RSS_FILE = WARDOG_DIR + "rss"
+HISTORY_FILE = WARDOG_DIR + "history"
 
 def run():
+    if not exists(expanduser(WARDOG_DIR)):
+        makedirs(WARDOG_DIR)
     if not exists(RSS_FILE):
-        sys.stderr.write("~/.wargodrss doesn't exist\nEnd\n")
+        sys.stderr.write("Error: %s doesn't exist\n" % RSS_FILE)
         sys.exit(1)
 
     history = get_history()
@@ -29,8 +35,7 @@ def run():
                 history["rss"][feed].append(entry_key(entry))
 
     history["current"] = history["current"][-MAX_ENTRIES:]
-    for i in history["current"]:
-        print i["title"]
+    open(expanduser("~/output.html"), "w").write(generate_html(history["current"]))
     save_history(history)
 
 def entry_key(entry):
