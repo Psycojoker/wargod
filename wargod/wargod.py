@@ -1,5 +1,6 @@
 # -*- coding:Utf-8 -*-
 
+import re
 import sys
 import json
 from os import makedirs
@@ -42,7 +43,7 @@ def entry_key(entry):
     return entry.get("id", entry.get("updated", entry.link))
 
 def parse_feeds():
-    return [rss[:-1] for rss in open(RSS_FILE, "r")]
+    return [rss[:-1] for rss in open(RSS_FILE, "r") if not re.match("^ *#.*$", rss)]
 
 def get_history():
     default = {"rss": {}, "current": []}
