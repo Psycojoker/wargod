@@ -41,7 +41,7 @@ def run():
                 history["rss"][feed].append(entry_key(entry))
 
     history["current"] = history["current"][-MAX_ENTRIES:]
-    open(expanduser("~/output.html"), "w").write(generate_html(history["current"]))
+    open(expanduser("~/output.html"), "w").write(generate_html(history["current"]).encode("Utf-8"))
     save_history(history)
 
 def entry_key(entry):
