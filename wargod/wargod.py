@@ -1,7 +1,10 @@
 # -*- coding:Utf-8 -*-
 
-from config import config
+import sys
+import os
+#from config import config
 
 def run():
-    print 'Time to write your code!'
-    print config.argument
+    if not os.path.exists(os.path.expanduser("~/.wardogrss")):
+        sys.stderr.write("~/.wardogrss doesn't exist\nEnd\n")
+        sys.exit(1)
