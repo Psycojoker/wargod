@@ -6,6 +6,7 @@ import json
 from feedparser import parse
 #from config import config
 
+MAX_ENTRIES = 10
 RSS_FILE = os.path.expanduser("~/.wargodrss")
 HISTORY_FILE = os.path.expanduser("~/.wargodrss.history")
 
@@ -17,11 +18,19 @@ def run():
     history = get_history()
     for feed in parse_feeds():
         if not history["rss"].get(feed):
-            history[feed] = []
+            history["rss"][feed] = []
 
         for entry in parse(feed).entries:
-            print entry.title
+            if entry.id not in history["rss"][feed]:
+                history["current"].append({"title": entry.title, "link":
+                                           entry.link, "description":
+                                           entry.description, "updated":
+                                           entry.updated})
+                history["rss"][feed].append(entry.id)
 
+    history["current"] = history["current"][-MAX_ENTRIES:]
+    for i in history["current"]:
+        print i["title"]
     save_history(history)
 
 def parse_feeds():
