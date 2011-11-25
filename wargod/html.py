@@ -66,7 +66,7 @@ FOOTER = """\
 def generate_html(entries):
     content = HEADER
 
-    for entry in entries:
+    for entry in entries[::-1]:
         content += """\
         <div class="item">
         <p class="item-title"><a href="%s">%s</a> - <a href="%s">%s</a></p>
