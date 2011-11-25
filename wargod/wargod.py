@@ -3,6 +3,7 @@
 import sys
 import os
 import json
+from feedparser import parse
 #from config import config
 
 RSS_FILE = os.path.expanduser("~/.wargodrss")
@@ -13,14 +14,19 @@ def run():
         sys.stderr.write("~/.wargodrss doesn't exist\nEnd\n")
         sys.exit(1)
 
-    print get_history()
-    print parse_feeds()
+    history = get_history()
+    for feed in parse_feeds():
+        if not history["rss"].get(feed):
+            history[feed] = []
+
+        for entry in parse(feed).entries:
+            print entry.title
 
 def parse_feeds():
     return [rss[:-1] for rss in open(RSS_FILE, "r")]
 
 def get_history():
     try:
-        return json.load(open(HISTORY_FILE, "r")) if os.path.exists(HISTORY_FILE) else {}
+        return json.load(open(HISTORY_FILE, "r")) if os.path.exists(HISTORY_FILE) else {"rss": {}}
     except ValueError:
-        return {}
+        return {"rss" : {}}
