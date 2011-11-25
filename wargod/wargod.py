@@ -21,17 +21,20 @@ def run():
             history["rss"][feed] = []
 
         for entry in parse(feed).entries:
-            if entry.id not in history["rss"][feed]:
+            if entry_key(entry) not in history["rss"][feed]:
                 history["current"].append({"title": entry.title, "link":
                                            entry.link, "description":
                                            entry.description, "updated":
                                            entry.updated})
-                history["rss"][feed].append(entry.id)
+                history["rss"][feed].append(entry_key(entry))
 
     history["current"] = history["current"][-MAX_ENTRIES:]
     for i in history["current"]:
         print i["title"]
     save_history(history)
+
+def entry_key(entry):
+    return entry.get("id", entry.get("updated", entry.link))
 
 def parse_feeds():
     return [rss[:-1] for rss in open(RSS_FILE, "r")]
