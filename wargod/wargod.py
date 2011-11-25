@@ -1,17 +1,17 @@
 # -*- coding:Utf-8 -*-
 
 import sys
-import os
 import json
+from os.path import expanduser, exists
 from feedparser import parse
 #from config import config
 
 MAX_ENTRIES = 10
-RSS_FILE = os.path.expanduser("~/.wargodrss")
-HISTORY_FILE = os.path.expanduser("~/.wargodrss.history")
+RSS_FILE = expanduser("~/.wargodrss")
+HISTORY_FILE = expanduser("~/.wargodrss.history")
 
 def run():
-    if not os.path.exists(RSS_FILE):
+    if not exists(RSS_FILE):
         sys.stderr.write("~/.wargodrss doesn't exist\nEnd\n")
         sys.exit(1)
 
@@ -42,7 +42,7 @@ def parse_feeds():
 def get_history():
     default = {"rss": {}, "current": []}
     try:
-        return json.load(open(HISTORY_FILE, "r")) if os.path.exists(HISTORY_FILE) else default
+        return json.load(open(HISTORY_FILE, "r")) if exists(HISTORY_FILE) else default
     except ValueError:
         return default
 
