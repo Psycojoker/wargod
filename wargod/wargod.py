@@ -24,10 +24,14 @@ def run():
 
     history = get_history()
     for feed in parse_feeds():
-        if not history["rss"].get(feed):
-            history["rss"][feed] = []
 
         parsed_feed = parse(feed)
+
+        if not history["rss"].get(feed):
+            # if the feed is new, only display the newest entry
+            # so put all other entries in the history of this feed
+            history["rss"][feed] = [entry_key(entry) for entry in parsed_feed.entries[1:]]
+
         for entry in parsed_feed.entries[::-1]:
             if entry_key(entry) not in history["rss"][feed]:
                 history["current"].append({"title": entry.title,
