@@ -10,7 +10,7 @@ from feedparser import parse
 from html import generate_html
 #from config import config
 
-MAX_ENTRIES = 10
+MAX_ENTRIES = 20
 WARDOG_DIR = expanduser("~/.config/wargod/")
 RSS_FILE = WARDOG_DIR + "rss"
 HISTORY_FILE = WARDOG_DIR + "history"
