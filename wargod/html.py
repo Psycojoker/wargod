@@ -9,6 +9,7 @@ HEADER = """\
         margin-left: 8%;
         margin-top: 40px;
         margin-bottom: 40px;
+        font-size: 42px;
     }
     #content
     {
@@ -17,39 +18,47 @@ HEADER = """\
     }
     .item
     {
-        margin-bottom: 25px;
+        margin-bottom: 55px;
         padding: 4px;
     }
     .item-title
     {
         padding: 4px;
-        padding-left: 6px;
+        padding-left: 15px;
+        padding-right: 15px;
         margin-top: 0px;
         margin-bottom: 0px;
-        /* border: 1px solid; */
-        background-color: #9D4DC9;
+        border-bottom: 3px solid;
     }
     .item-description
     {
-        background-color: #DDDDDD;
         padding: 4px;
-        padding-left: 6px;
-        margin-top: 0px;
+        margin-left: 35px;
+        margin-right: 35px;
+        margin-top: 3px;
         margin-bottom: 0px;
-        /*
-        border-left:   1px solid;
-        border-right:  1px solid;
-        border-bottom: 1px solid;
-        */
+    }
+    .separator
+    {
+        text-align: center;
+        margin-bottom: 74px;
+        border-top: 1px solid #DDDDDD;
+        margin-left: 38%;
+        margin-right: 38%;
     }
     .item-title a
     {
-        color: #EEEEEE;
+        color: #555555;
         text-decoration: none;
     }
     p
     {
         font-size: 20px;
+    }
+    .inner-description
+    {
+        padding: 0px;
+        margin: 0px;
     }
     </style>
 </head>
@@ -70,13 +79,21 @@ def generate_html(entries):
     for entry in entries[::-1]:
         content += """\
         <div class="item">
-        <p class="item-title"><a href="%s">%s</a> - <a href="%s">%s</a></p>
-        <p class="item-description">
-        %s
+        <p class="item-title"><a href="%s">
+        """ % entry["link"]
+        content += '%s</a> - ' % entry["title"]
+        content += '<a href="%s">' % entry["site"]["link"]
+        content += """%s</a></p>
+        <div class="item-description"><p class="inner-description">
+        """ % entry["site"]["title"]
+        content += """%s
         </p>
         </div>
+        </div>
 
-""" % (entry["link"], entry["title"], entry["site"]["link"], entry["site"]["title"], entry["description"])
+        <p class="separator"> </p>
+
+""" % entry["description"]
 
     content += FOOTER
 
