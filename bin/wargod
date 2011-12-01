@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import logging
+
 from argparse import ArgumentParser
 
 try:
@@ -22,11 +24,11 @@ signal(SIGINT, stop)
 
 if __name__ == '__main__':
     parser = ArgumentParser('wargod')
-    #parser.add_argument('-a', '--argument', help='an example argument')
+    parser.add_argument('-d', '--debug', action="store_true", help='display debug informations')
 
     options = parser.parse_args()
 
-    #if options.argument:
-        #config.argument = options.argument
+    if options.debug:
+        logging.basicConfig(level=logging.DEBUG)
 
     run()

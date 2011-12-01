@@ -1,3 +1,7 @@
+# -*- coding:Utf-8 -*-
+
+import logging
+
 HEADER = """\
 <html>
 <head>
@@ -74,18 +78,25 @@ FOOTER = """\
 
 
 def generate_html(entries):
+    logging.debug("starting html generation")
     content = HEADER
 
     for entry in entries[::-1]:
+        logging.debug("handling an entry %s" % entry["site"]["link"])
+        logging.debug("adding link: %s" % entry["link"])
         content += """\
         <div class="item">
         <p class="item-title"><a href="%s">
         """ % entry["link"]
+        logging.debug("adding title: %s" % entry["title"])
         content += '%s</a> - ' % entry["title"]
+        logging.debug("adding site link: %s" % entry["site"]["link"])
         content += '<a href="%s">' % entry["site"]["link"]
+        logging.debug("adding site title: %s" % entry["site"]["title"])
         content += """%s</a></p>
         <div class="item-description"><p class="inner-description">
         """ % entry["site"]["title"]
+        logging.debug("adding description: %s..." % entry["description"][50:])
         content += """%s
         </p>
         </div>
@@ -95,6 +106,8 @@ def generate_html(entries):
 
 """ % entry["description"]
 
+    logging.debug("adding FOOTER")
     content += FOOTER
 
+    logging.debug("end of html generation")
     return content
