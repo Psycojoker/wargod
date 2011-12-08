@@ -80,4 +80,4 @@ def get_history():
         return default
 
 def save_history(history):
-    json.dump(history, open(HISTORY_FILE, "w"))
+    json.dump(history, open(HISTORY_FILE, "w"), indent=4)
