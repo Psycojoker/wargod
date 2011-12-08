@@ -30,16 +30,17 @@ def run():
         update_feeds(history)
 
     logging.debug("cutting the size of the 'current' list to MAX_ENTRIES")
-    history["output"]["output.html"] = history["output"]["output.html"][-MAX_ENTRIES:]
-    open(expanduser("~/output.html"), "w").write(generate_html(history["output"]["output.html"]).encode("Utf-8"))
-    logging.debug("output.html written")
+    for name in history["output"]:
+        history["output"][name] = history["output"][name][-MAX_ENTRIES:]
+        open(expanduser("~/%s" % name), "w").write(generate_html(history["output"][name]).encode("Utf-8"))
+        logging.debug("%s written" % name)
     logging.debug("saging history")
     save_history(history)
     logging.debug("end")
 
 def update_feeds(history):
     a = len(parse_feeds())
-    for feed in parse_feeds():
+    for feed, file_names in parse_feeds():
         logging.debug("%s feeds left to handle" % a)
         a -= 1
 
@@ -55,14 +56,17 @@ def update_feeds(history):
         for entry in parsed_feed.entries[::-1]:
             logging.debug("handling entry: %s" % entry["title"])
             if entry_key(entry) not in history["rss"][feed]:
-                history["output"]["output.html"].append({"title": entry.title,
-                                           "link": entry.link,
-                                           "description": entry.description,
-                                           "updated": entry.get("updated"),
-                                           "site": {"title": parsed_feed.feed.title,
-                                                    "link": parsed_feed.feed.link,
-                                                   }
-                                          })
+                for fileu in (file_names if file_names else ["output.html"]):
+                    if not history["output"].get(fileu):
+                        history["output"][fileu] = []
+                    history["output"][fileu].append({"title": entry.title,
+                                               "link": entry.link,
+                                               "description": entry.description,
+                                               "updated": entry.get("updated"),
+                                               "site": {"title": parsed_feed.feed.title,
+                                                        "link": parsed_feed.feed.link,
+                                                       }
+                                              })
                 logging.debug("entry not in history, adding it")
                 history["rss"][feed].append(entry_key(entry))
 
@@ -70,7 +74,7 @@ def entry_key(entry):
     return entry.get("id", entry.get("updated", entry.link))
 
 def parse_feeds():
-    return [rss[:-1] for rss in open(RSS_FILE, "r") if not re.match("^ *#.*$", rss)]
+    return [(rss[:-1].split(" ")[0], rss[:-1].split(" ")[1:]) for rss in open(RSS_FILE, "r") if not re.match("^ *#.*$", rss)]
 
 def get_history():
     default = {"rss": {}, "output": {"output.html": []}}
