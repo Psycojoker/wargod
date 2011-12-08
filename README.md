@@ -21,8 +21,3 @@ around 1500 lines of code). I intent to make it way more easy to have severals
 output files with WarGod than it is the case with rawdog (it's the reason of
 this project in fact, I want to do this in another way than you do this with
 rawdog right now).
-
-# CSS
-
-My design skills are horrible, I would gladly accept a new CSS file for the
-output.html (or maybe I should take rawdog's default one).
