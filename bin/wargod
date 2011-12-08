@@ -25,10 +25,14 @@ signal(SIGINT, stop)
 if __name__ == '__main__':
     parser = ArgumentParser('wargod')
     parser.add_argument('-d', '--debug', action="store_true", help='display debug informations')
+    parser.add_argument('-N', '--no-update', action="store_true", help='don\'t update the feeds, only regenerate the html')
 
     options = parser.parse_args()
 
     if options.debug:
         logging.basicConfig(level=logging.DEBUG)
+
+    if options.no_update:
+        config.update_feeds = False
 
     run()

@@ -9,7 +9,7 @@ from os.path import expanduser, exists
 from feedparser import parse
 
 from html import generate_html
-#from config import config
+from config import config
 
 MAX_ENTRIES = 20
 WARDOG_DIR = expanduser("~/.config/wargod/")
@@ -27,32 +27,33 @@ def run():
     a = len(parse_feeds())
     logging.debug("getting history")
     history = get_history()
-    for feed in parse_feeds():
-        logging.debug("%s feeds left to handle" % a)
-        a -= 1
+    if config.update_feeds:
+        for feed in parse_feeds():
+            logging.debug("%s feeds left to handle" % a)
+            a -= 1
 
-        logging.debug("current feed: %s" % feed)
-        parsed_feed = parse(feed)
+            logging.debug("current feed: %s" % feed)
+            parsed_feed = parse(feed)
 
-        if not history["rss"].get(feed):
-            # if the feed is new, only display the newest entry
-            # so put all other entries in the history of this feed
-            logging.debug("feed not in history, adding it and pushing all it's items execpt the newest one in the history")
-            history["rss"][feed] = [entry_key(entry) for entry in parsed_feed.entries[1:]]
+            if not history["rss"].get(feed):
+                # if the feed is new, only display the newest entry
+                # so put all other entries in the history of this feed
+                logging.debug("feed not in history, adding it and pushing all it's items execpt the newest one in the history")
+                history["rss"][feed] = [entry_key(entry) for entry in parsed_feed.entries[1:]]
 
-        for entry in parsed_feed.entries[::-1]:
-            logging.debug("handling entry: %s" % entry["title"])
-            if entry_key(entry) not in history["rss"][feed]:
-                history["current"].append({"title": entry.title,
-                                           "link": entry.link,
-                                           "description": entry.description,
-                                           "updated": entry.get("updated"),
-                                           "site": {"title": parsed_feed.feed.title,
-                                                    "link": parsed_feed.feed.link,
-                                                   }
-                                          })
-                logging.debug("entry not in history, adding it")
-                history["rss"][feed].append(entry_key(entry))
+            for entry in parsed_feed.entries[::-1]:
+                logging.debug("handling entry: %s" % entry["title"])
+                if entry_key(entry) not in history["rss"][feed]:
+                    history["current"].append({"title": entry.title,
+                                               "link": entry.link,
+                                               "description": entry.description,
+                                               "updated": entry.get("updated"),
+                                               "site": {"title": parsed_feed.feed.title,
+                                                        "link": parsed_feed.feed.link,
+                                                       }
+                                              })
+                    logging.debug("entry not in history, adding it")
+                    history["rss"][feed].append(entry_key(entry))
 
     logging.debug("cutting the size of the 'current' list to MAX_ENTRIES")
     history["current"] = history["current"][-MAX_ENTRIES:]
