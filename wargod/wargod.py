@@ -30,8 +30,8 @@ def run():
         update_feeds(history)
 
     logging.debug("cutting the size of the 'current' list to MAX_ENTRIES")
-    history["current"] = history["current"][-MAX_ENTRIES:]
-    open(expanduser("~/output.html"), "w").write(generate_html(history["current"]).encode("Utf-8"))
+    history["output"]["output.html"] = history["output"]["output.html"][-MAX_ENTRIES:]
+    open(expanduser("~/output.html"), "w").write(generate_html(history["output"]["output.html"]).encode("Utf-8"))
     logging.debug("output.html written")
     logging.debug("saging history")
     save_history(history)
@@ -55,7 +55,7 @@ def update_feeds(history):
         for entry in parsed_feed.entries[::-1]:
             logging.debug("handling entry: %s" % entry["title"])
             if entry_key(entry) not in history["rss"][feed]:
-                history["current"].append({"title": entry.title,
+                history["output"]["output.html"].append({"title": entry.title,
                                            "link": entry.link,
                                            "description": entry.description,
                                            "updated": entry.get("updated"),
@@ -73,7 +73,7 @@ def parse_feeds():
     return [rss[:-1] for rss in open(RSS_FILE, "r") if not re.match("^ *#.*$", rss)]
 
 def get_history():
-    default = {"rss": {}, "current": []}
+    default = {"rss": {}, "output": {"output.html": []}}
     try:
         return json.load(open(HISTORY_FILE, "r")) if exists(HISTORY_FILE) else default
     except ValueError:
