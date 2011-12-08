@@ -5,19 +5,28 @@ pages. It is intended to be executed periodically by crontab.
 
 # Usage
 
-Create the file <code>~/.config/wargod/rss</code> and put one RSS url by line
-in it. Every line with a <code>#</code> as first character will be ignored then
-just simply run the command "wargod", this will create a file name
-"output.html" in your home directory.
+All your urls are to be put in the file<code>~/.config/wargod/rss</code>. The syntaxe is very simple:
+
+* one rss per line
+* every line that have <code>#</code> as first non-blank character is ignored
+* new to each RSS you can put an infinite quantity of file name, those will be the output files for this RSS
+* if no file name is specified then "output.html" will be used
+
+Once this is done, run the command "wargod" (you can see the options with
+--help), this will create output html files for your RSS.
+
+I recommend you to put this command in your crontab.
 
 # Inspiration/credit
 
 WarGod can be describe as minimalist version of
-[rawdog](http://offog.org/code/rawdog.html). In fact, for the moment the only
-improvement in comparison to rawdog is that WarGod, when it discovered a new
-RSS, will only add the newest items of it instead of all of it. The other
-improvement for me is that it's less than 100 lines of code (where rawdog is
-around 1500 lines of code). I intent to make it way more easy to have severals
-output files with WarGod than it is the case with rawdog (it's the reason of
-this project in fact, I want to do this in another way than you do this with
-rawdog right now).
+[rawdog](http://offog.org/code/rawdog.html). I've started this project because
+the way to output RSS in different files is unfunny in rawdog and that it's
+code isn't structured at all in a way that would allow this easily.
+
+The differences with rawdog are:
+
+* way younger project with a lot less features
+* in consequence a way smaller code base (around 100 lines vs around 1500 lines)
+* when you add a new RSS, only the newest item is added to the output so you don't overflow it each time you add a new RSS
+* very easy way to output a RSS in several files
