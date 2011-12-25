@@ -53,6 +53,9 @@ def update_feeds(history):
             logging.debug("feed not in history, adding it and pushing all it's items execpt the newest one in the history")
             history["rss"][feed] = [entry_key(entry) for entry in parsed_feed.entries[1:]]
 
+        if not parsed_feed.entries:
+            print >>sys.stderr, "Error: %s has not entries" % feed
+
         for entry in parsed_feed.entries[::-1]:
             logging.debug("handling entry: %s" % entry["title"])
             if entry_key(entry) not in history["rss"][feed]:
