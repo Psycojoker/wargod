@@ -32,7 +32,7 @@ def run():
     logging.debug("cutting the size of the 'current' list to MAX_ENTRIES")
     for name in history["output"]:
         history["output"][name] = history["output"][name][-MAX_ENTRIES:]
-        open(expanduser("~/%s" % name), "w").write(generate_html(history["output"][name]).encode("Utf-8"))
+        open(expanduser("~/%s" % name), "w").write(generate_html(history["output"][name], name).encode("Utf-8"))
         logging.debug("%s written" % name)
     logging.debug("saging history")
     save_history(history)

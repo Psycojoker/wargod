@@ -10,15 +10,15 @@ HEADER = """\
     <style>
     #title
     {
-        margin-left: 8%;
+        margin-left: 8%%;
         margin-top: 40px;
         margin-bottom: 40px;
         font-size: 42px;
     }
     #content
     {
-        margin-left: 12%;
-        margin-right: 12%;
+        margin-left: 12%%;
+        margin-right: 12%%;
     }
     .item
     {
@@ -47,8 +47,8 @@ HEADER = """\
         text-align: center;
         margin-bottom: 74px;
         border-top: 1px solid #DDDDDD;
-        margin-left: 38%;
-        margin-right: 38%;
+        margin-left: 38%%;
+        margin-right: 38%%;
     }
     .item-title a
     {
@@ -77,9 +77,9 @@ FOOTER = """\
 </html>"""
 
 
-def generate_html(entries):
+def generate_html(entries, title="default"):
     logging.debug("starting html generation")
-    content = HEADER
+    content = HEADER % title
 
     for entry in entries[::-1]:
         logging.debug("handling an entry %s" % entry["site"]["link"])
