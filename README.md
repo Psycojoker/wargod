@@ -18,6 +18,18 @@ Once this is done, run the command "wargod" (you can see the options with
 
 I recommend you to put this command in your crontab.
 
+# Installation
+
+You need:
+
+* feedparser
+* redability-lxml (and lxml since it's not in it's dependancies for the moment)
+
+So on debian and debian-based:
+
+    sudo aptitude install python-feedparser python-lxml
+    sudo pip install readability-lxml
+
 # Inspiration/credit
 
 WarGod can be describe as minimalist version of
