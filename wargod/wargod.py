@@ -73,7 +73,7 @@ def update_feeds(history):
                                                "description": entry.description if not extend else get_link_content(entry.link, entry.description),
                                                "updated": entry.get("updated"),
                                                "site": {"title": parsed_feed.feed.title,
-                                                        "link": parsed_feed.feed.link,
+                                                        "link": parsed_feed.feed.link if parsed_feed.feed.get("link") else feed,
                                                        }
                                               })
                 logging.debug("entry not in history, adding it")
