@@ -7,7 +7,7 @@ import logging
 from os import makedirs
 from os.path import expanduser, exists
 from feedparser import parse
-from urllib2 import urlopen
+from urllib2 import urlopen, HTTPError
 from readability.readability import Document
 from lxml import etree
 from lxml.html import ElementSoup
@@ -70,7 +70,7 @@ def update_feeds(history):
                     history["output"][fileu].append({"title": entry.title,
                                                "link": entry.link,
                                                "description": entry.description,
-                                               "description": entry.description if not extend else get_link_content(entry.link),
+                                               "description": entry.description if not extend else get_link_content(entry.link, entry.description),
                                                "updated": entry.get("updated"),
                                                "site": {"title": parsed_feed.feed.title,
                                                         "link": parsed_feed.feed.link,
@@ -79,8 +79,11 @@ def update_feeds(history):
                 logging.debug("entry not in history, adding it")
                 history["rss"][feed].append(entry_key(entry))
 
-def get_link_content(url):
-    site = urlopen(url)
+def get_link_content(url, original_description):
+    try:
+        site = urlopen(url)
+    except HTTPError:
+        return original_description + "\n<p><b>WarGod error</b>: I could not access this url</p>"
     site_url = "/".join(site.geturl().split("/")[:3]) + "/"
     xml = ElementSoup.parse(StringIO(Document(site.read()).summary()))
     xml.make_links_absolute(site_url)
