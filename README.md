@@ -11,6 +11,7 @@ All your urls are to be put in the file<code>~/.config/wargod/rss</code>. The sy
 * every line that have <code>#</code> as first non-blank character is ignored
 * new to each RSS you can put an infinite quantity of file name, those will be the output files for this RSS
 * if no file name is specified then "output.html" will be used
+* if you add the keyword "extend" next to a feed (with the filename(s)) the readability algorithms will be used on the link of each items of this feed to get the content of the item instead of using what is in the <description> tag. This is usefull for RSS that only provide a part of the article.
 
 Once this is done, run the command "wargod" (you can see the options with
 --help), this will create output html files for your RSS.
