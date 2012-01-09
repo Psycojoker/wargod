@@ -7,6 +7,11 @@ import logging
 from os import makedirs
 from os.path import expanduser, exists
 from feedparser import parse
+from urllib2 import urlopen
+from readability.readability import Document
+from lxml import etree
+from lxml.html import ElementSoup
+from StringIO import StringIO
 
 from html import generate_html
 from config import config
@@ -40,7 +45,7 @@ def run():
 
 def update_feeds(history):
     a = len(parse_feeds())
-    for feed, file_names in parse_feeds():
+    for feed, file_names, extend in parse_feeds():
         logging.debug("%s feeds left to handle" % a)
         a -= 1
 
@@ -65,6 +70,7 @@ def update_feeds(history):
                     history["output"][fileu].append({"title": entry.title,
                                                "link": entry.link,
                                                "description": entry.description,
+                                               "description": entry.description if not extend else get_link_content(entry.link),
                                                "updated": entry.get("updated"),
                                                "site": {"title": parsed_feed.feed.title,
                                                         "link": parsed_feed.feed.link,
@@ -73,11 +79,23 @@ def update_feeds(history):
                 logging.debug("entry not in history, adding it")
                 history["rss"][feed].append(entry_key(entry))
 
+def get_link_content(url):
+    site = urlopen(url)
+    site_url = "/".join(site.geturl().split("/")[:3]) + "/"
+    xml = ElementSoup.parse(StringIO(Document(site.read()).summary()))
+    xml.make_links_absolute(site_url)
+    return etree.tostring(xml.find("body"), encoding="Utf-8")[6:-7].decode("Utf-8")
+
 def entry_key(entry):
     return entry.get("id", entry.get("updated", entry.link))
 
 def parse_feeds():
-    return [(rss[:-1].split(" ")[0], rss[:-1].split(" ")[1:]) for rss in open(RSS_FILE, "r") if not re.match("^ *#.*$", rss)]
+    def manage_arguments(args):
+        if "extend" in args:
+            args.remove("extend")
+            return args, True
+        return args, False
+    return [(rss[:-1].split(" ")[0],) + manage_arguments(rss[:-1].split(" ")[1:]) for rss in open(RSS_FILE, "r") if not re.match("^ *#.*$", rss)]
 
 def get_history():
     default = {"rss": {}, "output": {"output.html": []}}
