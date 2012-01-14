@@ -67,9 +67,15 @@ def update_feeds(history):
                 for fileu in (file_names if file_names else ["output.html"]):
                     if not history["output"].get(fileu):
                         history["output"][fileu] = []
+
+                    if entry.get("description"):
+                        description = entry.description if not extend else get_link_content(entry.link, entry.description)
+                    else:
+                        description = "<p><b>WarGod</b>: this item doesn't have any description"
+
                     history["output"][fileu].append({"title": entry.title,
                                                "link": entry.link,
-                                               "description": entry.description if not extend else get_link_content(entry.link, entry.description),
+                                               "description": description,
                                                "updated": entry.get("updated"),
                                                "site": {"title": parsed_feed.feed.title,
                                                         "link": parsed_feed.feed.link if parsed_feed.feed.get("link") else feed,
