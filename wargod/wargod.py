@@ -69,7 +69,6 @@ def update_feeds(history):
                         history["output"][fileu] = []
                     history["output"][fileu].append({"title": entry.title,
                                                "link": entry.link,
-                                               "description": entry.description,
                                                "description": entry.description if not extend else get_link_content(entry.link, entry.description),
                                                "updated": entry.get("updated"),
                                                "site": {"title": parsed_feed.feed.title,
