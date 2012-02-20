@@ -8,7 +8,7 @@ from os import makedirs
 from os.path import expanduser, exists
 from feedparser import parse
 from urllib2 import urlopen, HTTPError
-from readability.readability import Document
+from readability.readability import Document, Unparseable
 from lxml import etree
 from lxml.html import ElementSoup
 from StringIO import StringIO
@@ -90,7 +90,11 @@ def get_link_content(url, original_description):
     except HTTPError:
         return original_description + "\n<p><b>WarGod error</b>: I could not access this url</p>"
     site_url = "/".join(site.geturl().split("/")[:3]) + "/"
-    xml = ElementSoup.parse(StringIO(Document(site.read()).summary()))
+    content = site.read()
+    try:
+        xml = ElementSoup.parse(StringIO(Document(content).summary()))
+    except Unparseable:
+        return original_description + "\n<p><b>WarGod error</b>: I could not parse this url</p>"
     xml.make_links_absolute(site_url)
     return etree.tostring(xml.find("body"), encoding="Utf-8")[6:-7].decode("Utf-8")
 
