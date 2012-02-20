@@ -62,7 +62,7 @@ def update_feeds(history):
             print >>sys.stderr, "Error: %s has not entries" % feed
 
         for entry in parsed_feed.entries[::-1]:
-            logging.debug("handling entry: %s" % entry["title"])
+            logging.debug("handling entry: %s" % entry["title"] if entry.get("title") else "")
             if entry_key(entry) not in history["rss"][feed]:
                 for fileu in (file_names if file_names else ["output.html"]):
                     if not history["output"].get(fileu):
@@ -73,11 +73,11 @@ def update_feeds(history):
                     else:
                         description = "<p><b>WarGod</b>: this item doesn't have any description"
 
-                    history["output"][fileu].append({"title": entry.title,
+                    history["output"][fileu].append({"title": entry.get("title", "No title"),
                                                "link": entry.link,
                                                "description": description,
                                                "updated": entry.get("updated"),
-                                               "site": {"title": parsed_feed.feed.title,
+                                               "site": {"title": parsed_feed.feed.get("title", feed),
                                                         "link": parsed_feed.feed.link if parsed_feed.feed.get("link") else feed,
                                                        }
                                               })
