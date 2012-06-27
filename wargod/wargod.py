@@ -16,10 +16,12 @@ from StringIO import StringIO
 from html import generate_html
 from config import config
 
+
 MAX_ENTRIES = 80
 WARDOG_DIR = expanduser("~/.config/wargod/")
 RSS_FILE = WARDOG_DIR + "rss"
 HISTORY_FILE = WARDOG_DIR + "history"
+
 
 def run():
     if not exists(expanduser(WARDOG_DIR)):
@@ -42,6 +44,7 @@ def run():
     logging.debug("saging history")
     save_history(history)
     logging.debug("end")
+
 
 def update_feeds(history):
     a = len(parse_feeds())
@@ -90,6 +93,7 @@ def update_feeds(history):
                 logging.debug("entry not in history, adding it")
                 history["rss"][feed].append(entry_key(entry))
 
+
 def get_link_content(url, original_description):
     try:
         site = urlopen(url)
@@ -104,8 +108,10 @@ def get_link_content(url, original_description):
     xml.make_links_absolute(site_url)
     return etree.tostring(xml.find("body"), encoding="Utf-8")[6:-7].decode("Utf-8")
 
+
 def entry_key(entry):
     return entry.get("id", entry.get("updated", entry.link))
+
 
 def parse_feeds():
     def manage_arguments(args):
@@ -115,12 +121,14 @@ def parse_feeds():
         return args, False
     return [(rss[:-1].split(" ")[0],) + manage_arguments(rss[:-1].split(" ")[1:]) for rss in open(RSS_FILE, "r") if not re.match("^ *#.*$", rss)]
 
+
 def get_history():
     default = {"rss": {}, "output": {"output.html": []}}
     try:
         return json.load(open(HISTORY_FILE, "r")) if exists(HISTORY_FILE) else default
     except ValueError:
         return default
+
 
 def save_history(history):
     json.dump(history, open(HISTORY_FILE, "w"), indent=4)
