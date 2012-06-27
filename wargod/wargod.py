@@ -50,7 +50,10 @@ def update_feeds(history):
         a -= 1
 
         logging.debug("current feed: %s" % feed)
-        parsed_feed = parse(feed)
+        try:
+            parsed_feed = parse(feed)
+        except Exception, e:
+            print >>sys.stderr, "Error: can't read %s: %s" % (feed, e)
 
         if not history["rss"].get(feed):
             # if the feed is new, only display the newest entry
