@@ -68,6 +68,9 @@ def update_feeds(history):
             logging.debug("handling entry: %s" % entry["title"] if entry.get("title") else "")
             if entry_key(entry) not in history["rss"][feed]:
                 for fileu in (file_names if file_names else ["output.html"]):
+                    if entry.get("link") is None:
+                        continue
+
                     if not history["output"].get(fileu):
                         history["output"][fileu] = []
 
