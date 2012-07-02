@@ -11,7 +11,9 @@ from urllib2 import urlopen, HTTPError
 from readability.readability import Document, Unparseable
 from lxml import etree
 from lxml.html import ElementSoup
+from lxml.html import parse as lxml_parse
 from StringIO import StringIO
+from yaml import load
 
 from html import generate_html
 from config import config
@@ -22,6 +24,13 @@ WARDOG_DIR = expanduser("~/.config/wargod/")
 RSS_FILE = WARDOG_DIR + "rss"
 HISTORY_FILE = WARDOG_DIR + "history"
 
+
+if exists(WARDOG_DIR + "xpath"):
+    logging.debug("opening xpath file")
+    grabber_list = load(open(WARDOG_DIR + "xpath", "r").read())
+else:
+    logging.debug("doesn't have a xpath file")
+    grabber_list = []
 
 def run():
     if not exists(expanduser(WARDOG_DIR)):
@@ -74,13 +83,25 @@ def update_feeds(history):
                     if entry.get("link") is None:
                         continue
 
+                    try:
+                        logging.debug("trying to get the real url of %s" % entry["title"])
+                        real_url = urlopen(entry["link"]).geturl()
+                        entry["link"] = real_url
+                    except Exception as e:
+                        logging.debug("Error: %s" % e)
+                        pass
+
                     if not history["output"].get(fileu):
                         history["output"][fileu] = []
 
-                    if entry.get("description"):
-                        description = entry.description if not extend else get_link_content(entry.link, entry.description)
-                    else:
+                    if extend:
+                        description = get_link_content(entry.link, entry.description)
+                    elif get_grabber(entry.link):
+                        description = grab_content(entry.link, entry.description)
+                    elif not entry.get("description"):
                         description = "<p><b>WarGod</b>: this item doesn't have any description"
+                    else:
+                        description = entry.description
 
                     history["output"][fileu].append({"title": entry.get("title", "No title"),
                                                "link": entry.link,
@@ -92,6 +113,41 @@ def update_feeds(history):
                                               })
                 logging.debug("entry not in history, adding it")
                 history["rss"][feed].append(entry_key(entry))
+
+
+def get_grabber(url):
+    for i, path in grabber_list:
+        if i.startswith("r:") and re.findall(i[2:], url):
+            return path
+        elif i in url:
+            return path
+    return None
+
+
+def grab_content(url, original_description):
+    logging.debug("grabbing the content of %s" % url)
+    try:
+        site = urlopen(url)
+    except Exception as e:
+        logging.debug("Error: can't access %s for grabbing: %s" % (url, e))
+        return original_description + "\n<p><b>WarGod error</b>: I could not access this url</p>"
+    site_url = "/".join(site.geturl().split("/")[:3]) + "/"
+    path = get_grabber(url)
+    logging.debug("xpath query is %s" % path)
+    try:
+        xml = lxml_parse(site)
+        content = xml.xpath(path)[0]
+    except Unparseable:
+        logging.debug("Error: can't parse %s using %s" % (url, path))
+        return original_description + "\n<p><b>WarGod error</b>: I could not parse this url</p>"
+    except IndexError:
+        logging.debug("Error: can't get content of %s using %s" % (url, path))
+        return original_description + "\n<p><b>WarGod error</b>: I could not parse this url</p>"
+    except Exception as e:
+        sys.stderr.write("Unpredicted Error: can't get content of %s using %s" % (url, path))
+        return original_description + "\n<p><b>WarGod error</b>: I could not parse this url</p>"
+    content.make_links_absolute(site_url)
+    return etree.tostring(content, encoding="Utf-8").decode("Utf-8")
 
 
 def get_link_content(url, original_description):
