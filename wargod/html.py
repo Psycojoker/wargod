@@ -96,3 +96,23 @@ def generate_html(entries, title="default"):
     result = Template(TEMPLATE).render(entries=map(lambda x: clean_html(x), entries)[::-1], title=title)
     logging.debug("end of html generation")
     return result
+
+def clean_html(entry):
+    description = BeautifulSoup(entry["description"])
+    logging.debug("cleaning %s" % entry["link"])
+    for div in description('div'):
+        logging.debug("clean attrs from %s" % div)
+        div.attrs = tuple()
+    for p in description('p'):
+        logging.debug("clean attrs from %s" % p)
+        p.attrs = tuple()
+    for comment in description.findAll(text=lambda x: isinstance(x, Comment)):
+        logging.debug("remove comment: %s" % comment)
+        comment.extract()
+    for script in description('script'):
+        logging.debug("remove script: %s" % script)
+        script.extract()
+    #from ipdb import set_trace; set_trace()
+    logging.debug("end of cleaning %s" % entry["link"])
+    entry["description"] = u"%s" % description
+    return entry
