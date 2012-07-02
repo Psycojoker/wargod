@@ -26,13 +26,17 @@ if __name__ == '__main__':
     parser = ArgumentParser('wargod')
     parser.add_argument('-d', '--debug', action="store_true", help='display debug informations')
     parser.add_argument('-N', '--no-update', action="store_true", help='don\'t update the feeds, only regenerate the html')
+    parser.add_argument('-R', '--regrab-content', action="store_true", help='regrab the content of the items already in the output')
 
     options = parser.parse_args()
 
     if options.debug:
         logging.root.setLevel(logging.DEBUG)
 
-    if options.no_update:
+    if options.no_update or options.regrab_content:
         config.update_feeds = False
+
+    if options.regrab_content:
+        config.regrab_content = True
 
     run()

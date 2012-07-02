@@ -48,6 +48,19 @@ def run():
     logging.debug("cutting the size of the 'current' list to MAX_ENTRIES")
     for name in history["output"]:
         history["output"][name] = history["output"][name][-MAX_ENTRIES:]
+        if config.regrab_content:
+            logging.debug("regrabing content of outputed links")
+            for i in history["output"][name]:
+                try:
+                    logging.debug("trying to get the real url of %s" % i["title"])
+                    real_url = urlopen(i["link"]).geturl()
+                    i["link"] = real_url
+                except Exception as e:
+                    logging.debug("Error: %s" % e)
+                    continue
+                if get_grabber(i["link"]):
+                    logging.debug("%s has a grabber" % i["link"])
+                    i["description"] = grab_content(i["link"], i["description"])
         open(expanduser("~/%s" % name), "w").write(generate_html(history["output"][name], name).encode("Utf-8"))
         logging.debug("%s written" % name)
     logging.debug("saging history")
