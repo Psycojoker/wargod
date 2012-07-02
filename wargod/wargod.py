@@ -153,7 +153,7 @@ def grab_content(url, original_description):
 def get_link_content(url, original_description):
     try:
         site = urlopen(url)
-    except HTTPError:
+    except Exception:
         return original_description + "\n<p><b>WarGod error</b>: I could not access this url</p>"
     site_url = "/".join(site.geturl().split("/")[:3]) + "/"
     content = site.read()
