@@ -7,7 +7,7 @@ import logging
 from os import makedirs
 from os.path import expanduser, exists
 from feedparser import parse
-from urllib2 import urlopen, HTTPError
+from urllib2 import urlopen
 from readability.readability import Document, Unparseable
 from lxml import etree
 from lxml.html import ElementSoup
