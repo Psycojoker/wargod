@@ -179,6 +179,8 @@ def get_link_content(url, original_description):
 
 
 def entry_key(entry):
+    if "deviantart.com" in entry.link:
+        return entry.link
     return entry.get("id", entry.get("updated", entry.link))
 
 
