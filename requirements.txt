@@ -1,0 +1,5 @@
+feedparser
+beautifulsoup
+lxml
+jinja2
+yaml
