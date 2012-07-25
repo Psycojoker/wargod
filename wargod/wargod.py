@@ -109,9 +109,9 @@ def update_feeds(history):
                         history["output"][fileu] = []
 
                     if extend:
-                        description = get_link_content(entry.link, entry.description)
+                        description = get_link_content(entry.link, entry.get("description", "<p><b>WarGod</b>: this item doesn't have any description"))
                     elif get_grabber(entry.link):
-                        description = grab_content(entry.link, entry.description)
+                        description = grab_content(entry.link, entry.get("description", "<p><b>WarGod</b>: this item doesn't have any description"))
                     elif not entry.get("description"):
                         description = "<p><b>WarGod</b>: this item doesn't have any description"
                     else:
