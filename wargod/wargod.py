@@ -176,7 +176,10 @@ def get_link_content(url, original_description):
     except Unparseable:
         return original_description + "\n<p><b>WarGod error</b>: I could not parse this url</p>"
     xml.make_links_absolute(site_url)
-    return etree.tostring(xml.find("body"), encoding="Utf-8")[6:-7].decode("Utf-8")
+    if not xml.find("body") is None:
+        return etree.tostring(xml.find("body"), encoding="Utf-8")[6:-7].decode("Utf-8")
+    else:
+        return ""
 
 
 def entry_key(entry):
