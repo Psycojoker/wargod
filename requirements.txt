@@ -2,4 +2,5 @@ feedparser
 beautifulsoup
 lxml
 jinja2
-yaml
+pyyaml
+readability-lxml
