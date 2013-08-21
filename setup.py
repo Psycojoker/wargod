@@ -1,8 +1,8 @@
 # -*- coding:Utf-8 -*-
 
 from setuptools import setup
-
 from wargod import __version__
+
 
 setup(name='wargod',
       version=__version__,
